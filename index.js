@@ -1,34 +1,41 @@
+// env
 require('dotenv').config();
-const Discord = require('discord.js')
-
-const { sentFrom, referredTo } = require('./src/guards.js')
-const commandTo = require('./src/commands.js')
-
-const bot = new Discord.Client()
 const { TOKEN, PREFIX } = process.env
 
+// instance bot
+const Discord = require('discord.js')
+const bot = new Discord.Client()
+bot.commands = new Discord.Collection()
+const commands = require('./src/commands')
+Object.keys(commands).map(key => {
+    bot.commands.set(commands[key].name, commands[key])
+})
 
+// import and declare utils
+const { guards } = require('./src/utils')
+let sentFormBot, referredToBot
+
+// import and declare core features
+const app = require('./src/app')
+let processInput
+
+// start bot
 bot.login(TOKEN)
-
-// utils
-let sentFormBot
-let referredToBot
-let commandToBot
 
 bot.on('ready', () => {
     let { tag, id } = bot.user
-    console.info(`Logged in as
-    tag: ${tag}
-    id: ${id}`)
+    console.info(`Logged in as\ntag: ${tag} - id: ${id}`)
 
-    sentFormBot = sentFrom(id)
-    referredToBot = referredTo(PREFIX)
-    commandToBot = commandTo(bot, PREFIX)
+    // use utils
+    sentFormBot = guards.sentFrom(id)
+    referredToBot = guards.referredTo(PREFIX)
+    processInput = app.processInput(bot, PREFIX)
 })
 
 bot.on('message', message => {
     if (sentFormBot(message)) return
-    if (referredToBot(message)) {
-        commandToBot(message)
-    }
+    if (!referredToBot(message)) return
+
+    processInput(message)
+
 })
