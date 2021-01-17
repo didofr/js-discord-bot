@@ -2,7 +2,7 @@
 require('dotenv').config();
 const { TOKEN, PREFIX } = process.env
 
-// bot
+// instance bot
 const Discord = require('discord.js')
 const bot = new Discord.Client()
 bot.commands = new Discord.Collection()
@@ -11,23 +11,22 @@ Object.keys(commands).map(key => {
     bot.commands.set(commands[key].name, commands[key])
 })
 
-// utils
-const { guards, utils } = require('./src')
+// import and declare utils
+const { guards, adapters } = require('./src/utils')
 let sentFormBot, referredToBot
 let getContentWithoutPrefix
 
-// start
+// start bot
 bot.login(TOKEN)
 
 bot.on('ready', () => {
     let { tag, id } = bot.user
-    console.info(`Logged in as
-    tag: ${tag}
-    id: ${id}`)
+    console.info(`Logged in as\ntag: ${tag} - id: ${id}`)
 
+    // use utils
     sentFormBot = guards.sentFrom(id)
     referredToBot = guards.referredTo(PREFIX)
-    getContentWithoutPrefix = utils.removePrefix(PREFIX)
+    getContentWithoutPrefix = adapters.removePrefix(PREFIX)
 })
 
 bot.on('message', message => {
