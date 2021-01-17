@@ -1,19 +1,23 @@
+// env
 require('dotenv').config();
-const Discord = require('discord.js')
-
-const { sentFrom, referredTo } = require('./src/guards.js')
-const commandTo = require('./src/commands.js')
-
-const bot = new Discord.Client()
 const { TOKEN, PREFIX } = process.env
 
-
-bot.login(TOKEN)
+// bot
+const Discord = require('discord.js')
+const bot = new Discord.Client()
+bot.commands = new Discord.Collection()
+const commands = require('./src/commands')
+Object.keys(commands).map(key => {
+    bot.commands.set(commands[key].name, commands[key])
+})
 
 // utils
-let sentFormBot
-let referredToBot
-let commandToBot
+const { guards, utils } = require('./src')
+let sentFormBot, referredToBot
+let getContentWithoutPrefix
+
+// start
+bot.login(TOKEN)
 
 bot.on('ready', () => {
     let { tag, id } = bot.user
@@ -21,14 +25,15 @@ bot.on('ready', () => {
     tag: ${tag}
     id: ${id}`)
 
-    sentFormBot = sentFrom(id)
-    referredToBot = referredTo(PREFIX)
-    commandToBot = commandTo(bot, PREFIX)
+    sentFormBot = guards.sentFrom(id)
+    referredToBot = guards.referredTo(PREFIX)
+    getContentWithoutPrefix = utils.removePrefix(PREFIX)
 })
 
 bot.on('message', message => {
     if (sentFormBot(message)) return
-    if (referredToBot(message)) {
-        commandToBot(message)
-    }
+    if (!referredToBot(message)) return
+
+    let content = getContentWithoutPrefix(message)
+    console.log(content)
 })
