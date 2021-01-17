@@ -34,6 +34,26 @@ bot.on('message', message => {
     if (sentFormBot(message)) return
     if (!referredToBot(message)) return
 
-    let content = getContentWithoutPrefix(message)
-    console.log(content)
+    let content = getContentWithoutPrefix(message).toLowerCase()
+
+    let args = content.split(/ +/)
+    let command = args.shift()
+    while(command) {
+        if(!bot.commands.has(command)) {
+            let errorMessage = `command ${command} not recognized.`
+            console.info(errorMessage)
+            message.reply(errorMessage)
+            return
+        }
+
+        try {
+            bot.commands.get(command).execute(bot, message)
+        } catch (error) {
+            console.error(error)
+            
+        }
+
+        command = args.shift()
+    }
+
 })
