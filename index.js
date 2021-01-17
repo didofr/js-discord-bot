@@ -12,9 +12,12 @@ Object.keys(commands).map(key => {
 })
 
 // import and declare utils
-const { guards, adapters } = require('./src/utils')
+const { guards } = require('./src/utils')
 let sentFormBot, referredToBot
-let getContentWithoutPrefix
+
+// import and declare core features
+const app = require('./src/app')
+let processInput
 
 // start bot
 bot.login(TOKEN)
@@ -26,33 +29,13 @@ bot.on('ready', () => {
     // use utils
     sentFormBot = guards.sentFrom(id)
     referredToBot = guards.referredTo(PREFIX)
-    getContentWithoutPrefix = adapters.removePrefix(PREFIX)
+    processInput = app.processInput(bot, PREFIX)
 })
 
 bot.on('message', message => {
     if (sentFormBot(message)) return
     if (!referredToBot(message)) return
 
-    let content = getContentWithoutPrefix(message).toLowerCase()
-
-    let args = content.split(/ +/)
-    let command = args.shift()
-    while(command) {
-        if(!bot.commands.has(command)) {
-            let errorMessage = `command ${command} not recognized.`
-            console.info(errorMessage)
-            message.reply(errorMessage)
-            return
-        }
-
-        try {
-            bot.commands.get(command).execute(bot, message)
-        } catch (error) {
-            console.error(error)
-            
-        }
-
-        command = args.shift()
-    }
+    processInput(message)
 
 })
