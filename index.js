@@ -37,5 +37,4 @@ bot.on('message', message => {
     if (!referredToBot(message)) return
 
     processInput(message)
-
 })
