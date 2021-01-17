@@ -1,8 +1,8 @@
 require('dotenv').config();
 const Discord = require('discord.js')
 
-const { sentFrom, referredTo } = require('./guards.js')
-const commandTo = require('./commands.js')
+const { sentFrom, referredTo } = require('./src/guards.js')
+const commandTo = require('./src/commands.js')
 
 const bot = new Discord.Client()
 const { TOKEN, PREFIX } = process.env
