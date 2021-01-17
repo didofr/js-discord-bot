@@ -1,25 +1,21 @@
-const { removePrefix } = require('../utils/adapters')
+const { adapters, errors } = require('../utils')
 
 module.exports = function (bot, prefix) {
+    let botKnowsCommand = errors.commandNotFound(bot)
+
     return function (message) {
-        let content = removePrefix(prefix)(message).toLowerCase()
+        let content = adapters.removePrefix(prefix)(message).toLowerCase()
 
         let args = content.split(/ +/)
 
         let command = args.shift()
         while (command) {
-            if (!bot.commands.has(command)) {
-                let errorMessage = `command ${command} not recognized.`
-                console.info(errorMessage)
-                message.reply(errorMessage)
-                return
-            }
+            if(!botKnowsCommand(command, message)) return
 
             try {
                 bot.commands.get(command).execute(bot, message)
             } catch (error) {
                 console.error(error)
-
             }
 
             command = args.shift()
