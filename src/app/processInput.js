@@ -2,9 +2,10 @@ const { adapters, errors } = require('../utils')
 
 module.exports = function (bot, prefix) {
     let botKnowsCommand = errors.commandNotFound(bot)
+    let getContentWithoudPrefix = adapters.removePrefix(prefix)
 
     return function (message) {
-        let content = adapters.removePrefix(prefix)(message).toLowerCase()
+        let content = getContentWithoudPrefix(message).toLowerCase()
 
         let args = content.split(/ +/)
 
