@@ -3,7 +3,7 @@
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0"
   },
-  "name": "javascript-bot",
+  "name": "kronos-bot",
   "version": "1.0.0",
   "main": "index.js",
   "devDependencies": {},
