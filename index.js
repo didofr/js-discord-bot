@@ -12,12 +12,16 @@ Object.keys(commands).map(key => {
 })
 
 // import and declare utils
-const { guards } = require('./src/utils')
+const { guards, guilds } = require('./src/utils')
 let sentFormBot, referredToBot
+let getFromGuilds
 
 // import and declare core features
 const app = require('./src/app')
 let processInput
+
+// TODO encapsule
+const { CronJob } = require('cron')
 
 // start bot
 bot.login(TOKEN)
@@ -30,6 +34,7 @@ bot.on('ready', () => {
     sentFormBot = guards.sentFrom(id)
     referredToBot = guards.referredTo(PREFIX)
     processInput = app.processInput(bot, PREFIX)
+    getFromGuilds = guilds.getGuildList(bot)
 })
 
 bot.on('message', message => {
@@ -37,4 +42,8 @@ bot.on('message', message => {
     if (!referredToBot(message)) return
 
     processInput(message)
+})
+
+const scheduledMessage = new CronJob('00 20 14 * * *', () => {
+    console.log(bot.guilds)
 })

@@ -1,12 +1,12 @@
 {
   "dependencies": {
+    "cron": "^1.8.2",
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0"
   },
   "name": "javascript-bot",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "start": "node index.js"
   },
@@ -14,7 +14,12 @@
     "type": "git",
     "url": "git+https://github.com/didof/js-discord-bot.git"
   },
-  "keywords": ["discord", "bot", "javascript", "automatization"],
+  "keywords": [
+    "discord",
+    "bot",
+    "javascript",
+    "automatization"
+  ],
   "author": "didof",
   "license": "ISC",
   "bugs": {
